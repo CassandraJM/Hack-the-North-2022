@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function BubbleChild(props) {
+export const BubbleChild = props => {
     return (
         <div className="bubble-child">
             <h3 className="bubble-child-summary">
