@@ -93,6 +93,7 @@ def topics():
         
         #return GPT_Completion("Give me a list of the top 5 relevant topics related to " + output_feature)
 
+@app.route('/predictions/', methods = ['POST'])
 def summ_to_pred(text):
     return GPT_Completion(text)
 
