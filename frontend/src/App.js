@@ -12,7 +12,7 @@ export const App = () => {
       {/* Textbox Form */}
       <form>
         <label>
-          <input type="text" name="name" label="Enter your ideas here"/>
+          <input type="text" name="name" placeholder="Enter your ideas here"/>
         </label>
         <input type="submit" value="Submit" />
       </form>
