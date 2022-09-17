@@ -1,0 +1,69 @@
+:root {
+    --bubble-size: 250px;
+    --bubble-color: #d9f9ff;
+    --bubble-children-height: 100px;
+    --bubble-child-size: 70px;
+}
+
+.bubble {
+    border-radius: 50%;
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--bubble-color);
+    background-color: #fff;
+    width: var(--bubble-size);
+    height: var(--bubble-size);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.bubble-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bubble-header h1 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.bubble-header p { 
+    font-size: 0.8em;
+    text-wrap: normal;
+    width: 80%;
+    margin: 10px 0 0 0;
+}
+
+.bubble-children {
+    display: flex;
+    margin-top: 10px;
+    border-radius: 5px;
+    width: 80%;
+    max-height: var(--bubble-children-height);
+    justify-content: center;
+}
+
+.bubble-children.no-children {
+    background-color: #ccc;
+}
+
+.bubble-child {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--bubble-color);
+    border-radius: 50%;
+    max-width: var(--bubble-child-size);
+    height: var(--bubble-child-size);
+    text-align: center;
+}
+
+.bubble-child h3 {
+    font-size: 0.8em;
+}
