@@ -46,10 +46,11 @@ def process_human_input():
 def expand():
     parent = request.json['parent']
     parents_children = all_ideas[parent][1]
-    grandchildren = {} #{str: [(int, str)]}
-    for child in parents_children: #child is a tuple (type, child name)
+    grandchildren = {}  # {str: [(int, str)]}
+    for child in parents_children:  # child is a tuple (type, child name)
         grandchildren[child[1]] = all_ideas[child[1]][1]
     return grandchildren
+
 
 if __name__ == '__main__':
     app.run()
