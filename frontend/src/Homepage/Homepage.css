@@ -1,4 +1,81 @@
 body {
-  box-sizing: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
+
 }
+
+.homepage_container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; 
+}
+
+.page_header {
+  display: flex;
+  align-content: center;
+  justify-items: center;
+  
+}
+
+label {
+  display: flex;
+}
+
+
+.textField {
+  display: flex;
+  width: 80%;
+
+}
+
+.inputForm {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100vw;
+
+}
+
+input[type='text'] {
+  width: 500px;
+}
+
+.homepage_grid {
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-areas: "";
+  width: 80vw;
+  padding-top: 30px;
+  height: 100vh;
+
+}
+
+
+.item {
+  border: 1px solid black;
+  min-height: 200px;
+  justify-self: center;
+  align-self: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
