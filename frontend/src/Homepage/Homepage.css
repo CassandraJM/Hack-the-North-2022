@@ -45,25 +45,6 @@ input[type='text'] {
   width: 500px;
 }
 
-.homepage_grid {
-  display: grid;
-  grid-template-rows: repeat(3, 1fr);
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-areas: "";
-  width: 80vw;
-  padding-top: 30px;
-  height: 100vh;
-
-}
-
-
-.item {
-  border: 1px solid black;
-  min-height: 200px;
-  justify-self: center;
-  align-self: center;
-}
-
 
 
 
