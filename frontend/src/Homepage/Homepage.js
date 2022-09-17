@@ -1,12 +1,12 @@
 import React from 'react'
-import './App.css'
+import './Homepage.css'
 
 export const App = () => {
   return (
     <div>
       {/* Title */}
       <div className="page_header">
-        <h1 className="page_name">Brainstorm++</h1>
+        <h1 className="page_name">ThinkNote++</h1>
       </div>
 
       {/* Textbox Form */}
