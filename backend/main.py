@@ -46,7 +46,6 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 #all_ideas = {str: [str, [(int, str)], str, int]}
 all_ideas = {}
 #newly_added_ideas = {str: [str, [(int, str)], str, int]}
-newly_added_ideas = set()
 COMMAND_CREATE = 'Create'
 COMMAND_EXPAND = 'Expand'
 COMMAND_SHRINK = 'Shrink'
@@ -77,31 +76,33 @@ def create_start_idea():
 
 
 @app.route('/api/save', methods=['POST'])
-def process_save_press():
-    global newly_added_ideas
-    for idea in newly_added_ideas:
-        summary = idea
-        parent = all_ideas[idea][0]
-        input = all_ideas[idea][2]
-        child_type = all_ideas[idea][1][0]
-        if parent == 0:
-            cursor.execute("""INSERT INTO Idea(summary, parent, input) values (%s, %s, %s) RETURNING iID;
+def process_save_press(idea):
+    summary = idea
+    parent = all_ideas[idea][0]
+    input = all_ideas[idea][2]
+    child_type = all_ideas[idea][1][0]
+    if parent == 0:
+        cursor.execute("""INSERT INTO Idea(summary, parent, input) values (%s, %s, %s) RETURNING iID;
                             """, (summary, 0, input))
-        else:
-            cursor.execute("""INSERT INTO Idea(summary, parent, input) values (%s, %s, %s) RETURNING iID;
+    else:
+        cursor.execute("""INSERT INTO Idea(summary, parent, input) values (%s, %s, %s) RETURNING iID;
                             """, (summary, parent, input))
-        iID = cursor.fetchone()[0]
-        print(idea)
-        print(all_ideas)
-        parent_id = all_ideas[idea][3]
-        cursor.execute(
-            """INSERT INTO ChildRelationship values (%s, %s, %s);""",
-            (parent_id, iID, child_type))
-    newly_added_ideas = set()
+    iID = cursor.fetchone()[0]
+    parent_id = all_ideas[idea][3]
+    cursor.execute(
+        """INSERT INTO ChildRelationship values (%s, %s, %s);""",
+        (parent_id, iID, child_type))
+    cursor.execute("""INSERT INTO Brainstorm values (%s, %s);""", (BID, iID))
+    cursor.execute("""SELECT * FROM Idea;""")
+    # for item in cursor:
+    #     print(item)
+    # if idea == 'go':
+    #     process_load_press()
 
 
 @app.route('/api/load', methods=['GET'])
 def process_load_press():
+    print('reached')
     bID = request.json('bID')
     all_ideas = {}
     #{str: [str, [(int, str)], str, int]}
@@ -137,7 +138,6 @@ def process_load_press():
 
 @app.route('/api/create', methods=['POST'])
 def process_human_input():
-    global newly_added_ideas
     new_input = request.json['input']
     parent = request.json['parent']
     df = get_summary(new_input)
@@ -146,7 +146,6 @@ def process_human_input():
     while summary in all_ideas or not summary:
         summary = df.iloc[counter][:-1]
         counter += 1
-    newly_added_ideas.add(summary)
     prediction = get_predictions(summary)  # string
     prediction = re.sub("[0-9]\. ", '', prediction)
     prediction = [i for i in prediction.split("\n") if i.strip()]
@@ -159,7 +158,7 @@ def process_human_input():
                       WHERE b.biD = %s""", (BID, ))
     #                 i.summary = %s; """, (summary, ))
     all_ideas[summary][3] = cursor.fetchone()[0]
-    process_save_press()
+    process_save_press(summary)
     return [summary, prediction]
 
 
