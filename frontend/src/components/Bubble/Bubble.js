@@ -17,7 +17,7 @@ export default class Bubble extends React.Component {
 
   render() {
     return (
-      <div className="bubble">
+      <div className='bubble'>
         <div className="bubble-header">
             <h1 className="bubble-summary">
                 { this.state.summary }

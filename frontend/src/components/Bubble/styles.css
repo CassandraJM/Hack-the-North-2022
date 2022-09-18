@@ -5,7 +5,7 @@
     --bubble-child-size: 70px;
 }
 
-.bubble {
+.bubble, .bubble-expanded {
     border-radius: 50%;
     border-width: 2px;
     border-style: solid;
@@ -20,6 +20,25 @@
     align-items: center;
     justify-content: center;
 }
+
+.bubble-expanded {
+    transition-timing-function: ease-in-out;
+    transition: 0.5s;
+    border-color: grey;
+    background-color: lightgray;
+    width: calc(var(--bubble-size)*2);
+    height: calc(var(--bubble-size)*2);
+    display: none;
+ }
+
+ .bubble:hover {
+    transition-timing-function: ease-in-out;
+    transition: 0.25s;
+    border-color: grey;
+    background-color: lightgray;
+    width: calc(var(--bubble-size)*2);
+    height: calc(var(--bubble-size)*2);
+ }
 
 .bubble-header {
     display: flex;
@@ -47,7 +66,14 @@
     width: 80%;
     max-height: var(--bubble-children-height);
     justify-content: center;
+    display: none;
+    visibility: hidden;
 }
+
+.bubble-childern:hover {
+    visibility: visible;
+}
+
 
 .bubble-children.no-children {
     background-color: #ccc;
@@ -65,6 +91,7 @@
     text-align: center;
     overflow: hidden;
 }
+
 
 .bubble-child h3 {
     font-size: 0.8em;
