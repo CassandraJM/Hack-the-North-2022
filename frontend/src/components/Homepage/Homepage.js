@@ -108,7 +108,6 @@ export default class App extends React.Component {
             onIdeaSubmitted={this.onIdeaSubmitted.bind(this)}
           />
         </div>
-        <Bubble data={"Unknown"}/>
       </div>
     );
   }
