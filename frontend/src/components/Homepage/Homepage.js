@@ -1,7 +1,8 @@
 import React from 'react';
 import './Homepage.css';
 import config from '../../config.json';
-import logo from './thinknotes-icon.png';
+import logo from '../../assets/think_notes.png';
+
 
 export const App = () => {
   const onSubmit = e => {
@@ -24,7 +25,7 @@ export const App = () => {
       {/* Title */}
       <div className="page-header">
         <div className="logo">
-        <img style={{width:60}} src={logo}/>
+        <img style={{width:80}} src={logo}/>
         <h1 className="page-name">Think Notes</h1>
         </div>
         {/* Textbox Form */}
