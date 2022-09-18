@@ -1,5 +1,7 @@
 import React from 'react';
-import BubbleChild from './BubbleChild';
+import { Type } from '../../Idea';
+import { BubbleChild } from './BubbleChild';
+import './styles.css';
 
 export default class Bubble extends React.Component {
   constructor(props) {
@@ -20,17 +22,13 @@ export default class Bubble extends React.Component {
             <h1 className="bubble-summary">
                 { this.state.summary }
             </h1>
-            <p className="bubble-input">
-                { this.state.input }
-            </p>
         </div>
         <div className={`bubble-children ${this.state.children ? '' : 'no-children'}`}>
             {
-              this.state.children ?
-              this.state.children.map((child) => {
+              this.state.children &&
+              this.state.children.filter(c => c.type === Type.CHILDREN).map((child) => {
                 return <BubbleChild summary={child.summary} />
               })
-              : <p>{this.state.predictions}</p>
             }
         </div>
       </div>
