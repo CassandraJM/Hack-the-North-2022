@@ -14,6 +14,10 @@ export default class App extends React.Component {
     };
   }
 
+  loadSession() {
+
+  }
+
   onSubmit = e => {
     e.preventDefault();
 
@@ -25,9 +29,10 @@ export default class App extends React.Component {
         headers: {'Content-Type': 'application/json'}, 
         body: JSON.stringify({
           input: text,
-          parent: null,
+          parent: this.state.currIdea.summary,
         }),
       }).then(res => {
+        e.target[0].value = '';
         res.json().then(data => {
           // Add children to idea
           let updatedIdea = this.state.currIdea;
@@ -45,18 +50,41 @@ export default class App extends React.Component {
   }
 
   onIdeaSubmitted = e => {
-    if(e.target.value && e.target.value.length > 0) {
-      this.setState({
-        currIdea: new Idea(e.target.value, e.target.value, null),
+    const text = e.target.value;
+    if(text && text.length > 0) {
+      fetch(`${config.testApiUrl}/api/start`, {
+        method: "POST",
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({
+          start: text,
+        }),
+      }).then(() => {
+        this.setState({
+          currIdea: new Idea(text, text, null),
+        });
       });
     }
   };
+
+  goBack() {
+    this.setState({
+      currIdea: this.state.currIdea.parent,
+    });
+  }
 
   render() {
     return (
       <div className="app-page">
         {/* Title */}
         <div className="page-header">
+          {
+            this.state.currIdea?.parent &&
+            <button className="page-header-back-button" onClick={this.goBack.bind(this)}>
+              <svg style={{width: '24px', height: '24px'}} viewBox="0 0 24 24">
+                <path fill="currentColor" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" />
+              </svg>
+            </button>
+          }
           <h1 className="page-name">ThinkBoard</h1>
           {/* Textbox Form */}
           <form className="page-form" onSubmit={this.onSubmit.bind(this)}>
@@ -69,13 +97,12 @@ export default class App extends React.Component {
             />
             <button type="submit" className="header-button">
               <svg style={{width: '24px', height: '24px'}} viewBox="0 0 24 24">
-                <path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+                <path fill="currentColor" d="M3 16H10V14H3M18 14V10H16V14H12V16H16V20H18V16H22V14M14 6H3V8H14M14 10H3V12H14V10Z" />
               </svg>
             </button>
           </form>
         </div>
         <div>
-          { console.log(this.state.currIdea) }
           <IdeaBoard
             idea={this.state.currIdea}
             onIdeaSubmitted={this.onIdeaSubmitted.bind(this)}

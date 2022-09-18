@@ -3,8 +3,7 @@ import './IdeaBoard.css';
 import Bubble from '../Bubble/Bubble';
 
 const IdeaBoard = props => {
-  console.log("Hello");
-  const itemOrder = [6, 0, 5, 3, -1, 7, 1, 4, 2];
+  const itemOrder = [6, 0, 8, 3, -1, 7, 1, 4, 2];
   const centerItem = (
     props.idea ? (
       <div className="center-idea">
@@ -36,7 +35,9 @@ const IdeaBoard = props => {
       } else if(itemOrder[i] < props.idea?.children.length) {
         items.push(
           <div className="item" key={i}>
-            <Bubble data={props.idea.children[itemOrder[i]]} />
+            <Bubble
+              data={props.idea.children[itemOrder[i]]}
+              onClick={props.onTraverseBubble?.bind(this)} />
           </div>
         );
       } else {

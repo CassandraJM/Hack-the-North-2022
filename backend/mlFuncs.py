@@ -1,16 +1,16 @@
-#---------------script 1 requirements------------------------
+# ---------------script 1 requirements------------------------
 import cohere
 import pandas as pd
 
-#----------------script 2 requirements------------------------
+# ----------------script 2 requirements------------------------
 import os
 import openai
 
-#Cohere Credentials
+# Cohere Credentials
 api_key = 'UZZiknNo4RNoGAIKAFcCzeESZq58IV07oiWoGory'
 co = cohere.Client(api_key)
 
-#OpenAI Credentials
+# OpenAI Credentials
 openai.organization = "org-odenvdznd4FpkAvZVt1nS3pJ"
 #openai.api_key = os.getenv("")
 openai.api_key = "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"
@@ -18,15 +18,15 @@ openai.api_key = "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"
 
 def get_predictions(summary):
     prompt = "Give me a list of the top 5 relevant topics related to " + summary
-    
+
     response = openai.Completion.create(
         engine="text-davinci-002",
-        prompt = prompt,
-        temperature = 0.6,
-        top_p = 1,
-        max_tokens = 64,
-        frequency_penalty = 0,
-        presence_penalty = 0
+        prompt=prompt,
+        temperature=0.6,
+        top_p=1,
+        max_tokens=64,
+        frequency_penalty=0,
+        presence_penalty=0
     )
     return response.choices[0].text
 
@@ -39,17 +39,17 @@ def get_summary(input_api):
     Features of your brain dump: "NLP training dataset generator, language accent corrector, automatic essay writer"
     ---
     "{str_input}"
-    Features of your brain dump:"'''.format(str_input = input_api)
+    Features of your brain dump:"'''.format(str_input=input_api)
 
     n_generations = 5
 
     prediction = co.generate(
         model='xlarge',
         prompt=prompt,
-        return_likelihoods = 'GENERATION',
+        return_likelihoods='GENERATION',
         stop_sequences=['"'],
         max_tokens=50,
-        temperature=1.0,
+        temperature=0.8,
         num_generations=n_generations,
         k=0,
         p=0.75)
@@ -58,15 +58,15 @@ def get_summary(input_api):
     likelihoods = []
     for gen in prediction.generations:
         gens.append(gen.text)
-        
+
         sum_likelihood = 0
         for t in gen.token_likelihoods:
             sum_likelihood += t.likelihood
-        
+
         likelihoods.append(sum_likelihood)
 
     pd.options.display.max_colwidth = 200
-    df = pd.DataFrame({'generation':gens, 'likelihood': likelihoods})
+    df = pd.DataFrame({'generation': gens, 'likelihood': likelihoods})
     df = df.drop_duplicates(subset=['generation'])
     df = df.sort_values('likelihood', ascending=False, ignore_index=True)
     return(df["generation"])
