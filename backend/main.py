@@ -5,6 +5,7 @@ import re
 import os
 import psycopg2
 from flask_cors import CORS
+from mlFuncs import get_summary, get_predictions
 
 # Create a cursor.
 user = "Rohit"
@@ -18,7 +19,8 @@ connection = psycopg2.connect(user=user,
                               port=26257,
                               database=f'{cluster}.defaultdb',
                               password=password,
-                              sslmode='verify-full')
+                              #sslmode='verify-full'
+                              )
 
 # Set to automatically commit each statement
 connection.set_session(autocommit=True)
@@ -77,20 +79,21 @@ def process_load_press():
 def process_human_input():
     new_input = request.json['input']
     parent = request.json['parent']
-    command_word = _get_command_word(text)
     df = get_summary(new_input)
-    summary = df.loc[0]
+    print(df)
+    summary = df.iloc[0][:-1]
     counter = 1
     while summary in all_ideas:
-        summary = df.loc[counter]
+        summary = df.iloc[counter][:-1]
         counter += 1
-    prediction = get_prediction(summary)  # string
-    prediction = re.sub("^[0-9]\.", '\n', prediction)
-    prediction = prediction.split("\n")
+    prediction = get_predictions(summary)  # string
+    print(prediction)
+    prediction = re.sub("[0-9]\. ", '', prediction)
+    prediction = [i for i in prediction.split("\n") if i.strip()]
     all_ideas[summary] = [parent, [(PREDICTIONS, prediction)], new_input]
     for i in prediction:
         all_ideas[summary][1].append((PREDICTIONS, i))
-    return {summary, prediction}
+    return [summary, prediction]
 
 
 ###
