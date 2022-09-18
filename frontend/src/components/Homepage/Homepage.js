@@ -11,6 +11,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       currIdea: null,
+      loading: false,
     };
   }
 
@@ -20,9 +21,12 @@ export default class App extends React.Component {
 
   onSubmit = e => {
     e.preventDefault();
-
     const text = e.target[0].value;
     if(text !== '') {
+      this.setState({
+        loading: true,
+      });
+
       // Call create idea API
       fetch(`${config.testApiUrl}/api/create`, {
         method: "POST",
@@ -43,7 +47,12 @@ export default class App extends React.Component {
           
           this.setState({
             currIdea: updatedIdea,
+            loading: false,
           });
+        });
+      }).catch(() => {
+        this.setState({
+          loading: false,
         });
       });
     }
@@ -106,9 +115,13 @@ export default class App extends React.Component {
               name="name"
               placeholder="Enter your ideas here"
               className="header-input w100"
-              disabled={!this.state.currIdea}
+              disabled={!this.state.currIdea || this.state.loading}
             />
-            <button type="submit" className="header-button">
+            <button
+              type="submit"
+              className="header-button"
+              disabled={!this.state.currIdea || this.state.loading}
+            >
               <svg style={{width: '24px', height: '24px'}} viewBox="0 0 24 24">
                 <path fill="currentColor" d="M3 16H10V14H3M18 14V10H16V14H12V16H16V20H18V16H22V14M14 6H3V8H14M14 10H3V12H14V10Z" />
               </svg>
@@ -120,6 +133,7 @@ export default class App extends React.Component {
             idea={this.state.currIdea}
             onIdeaSubmitted={this.onIdeaSubmitted.bind(this)}
             onTraverseBubble={this.onTraverseBubble.bind(this)}
+            loading={this.state.loading}
           />
         </div>
       </div>

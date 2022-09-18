@@ -6,7 +6,7 @@ const IdeaBoard = props => {
   const itemOrder = [6, 0, 8, 3, -1, 7, 1, 4, 2];
   const centerItem = (
     props.idea ? (
-      <div className="center-idea">
+      <div className={`center-idea ${props.loading ? 'loading' : ''}`}>
         { props.idea.summary }
       </div>
     ) : (

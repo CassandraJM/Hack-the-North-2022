@@ -46,3 +46,15 @@
   outline: none;
 }
 
+@keyframes border {
+  from {
+    border-color: #ffc9c9;
+  }
+  to {
+    border-color: #d9f9ff;
+  }
+}
+
+.center-idea.loading {
+  animation: border 1s linear infinite alternate;
+}
