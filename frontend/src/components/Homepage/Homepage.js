@@ -4,6 +4,7 @@ import config from '../../config.json';
 import IdeaBoard from '../IdeaBoard/IdeaBoard';
 import Idea from '../../Idea';
 import { Type } from '../../Idea';
+import Bubble from '../Bubble/Bubble'
 
 export default class App extends React.Component {
   constructor(props) {
@@ -80,6 +81,7 @@ export default class App extends React.Component {
             onIdeaSubmitted={this.onIdeaSubmitted.bind(this)}
           />
         </div>
+        <Bubble data={"Unknown"}/>
       </div>
     );
   }

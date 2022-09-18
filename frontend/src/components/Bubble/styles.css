@@ -5,7 +5,7 @@
     --bubble-child-size: 70px;
 }
 
-.bubble, .bubble-expanded {
+.bubble {
     border-radius: 50%;
     border-width: 2px;
     border-style: solid;
@@ -21,21 +21,12 @@
     justify-content: center;
 }
 
-.bubble-expanded {
-    transition-timing-function: ease-in-out;
-    transition: 0.5s;
-    border-color: grey;
-    background-color: lightgray;
-    width: calc(var(--bubble-size)*2);
-    height: calc(var(--bubble-size)*2);
-    display: none;
- }
 
  .bubble:hover {
     transition-timing-function: ease-in-out;
     transition: 0.25s;
-    border-color: grey;
-    background-color: lightgray;
+    border-color: rgb(222, 222, 222);
+    background-color: rgb(229, 229, 229);
     width: calc(var(--bubble-size)*2);
     height: calc(var(--bubble-size)*2);
  }
