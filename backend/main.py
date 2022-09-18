@@ -36,7 +36,7 @@ cursor.execute("""DROP TABLE IF EXISTS Idea CASCADE;
                   CREATE TABLE Idea(iID serial PRIMARY KEY, summary varchar(500)
                 , parent varchar(500), input varchar(1000));""")
 cursor.execute("""DROP TABLE IF EXISTS ChildRelationship CASCADE;
-                  CREATE TABLE ChildRelationship (pID int, cID int, type varchar(30), 
+                  CREATE TABLE ChildRelationship (pID int, cID int, type varchar(300), 
                   PRIMARY KEY (pID, cID));""")
 
 app = Flask(__name__)
@@ -70,9 +70,10 @@ BID = 100
 def create_start_idea():
     start = request.json['start']
     cursor.execute(
-        """Insert into Idea(sumarry, parent, input) values (%s, %s, %s) RETURNING iID;""", (start, 0, start))
+        """Insert into Idea(summary, parent, input) values (%s, %s, %s) RETURNING iID;""", (start, 0, start))
     iID = cursor.fetchone()[0]
     cursor.execute("""Insert into Brainstorm values (%s, %s)""", (BID, iID))
+    return ''
 
 
 @app.route('/api/save', methods=['POST'])
@@ -149,14 +150,14 @@ def process_human_input():
     prediction = get_predictions(summary)  # string
     prediction = re.sub("[0-9]\. ", '', prediction)
     prediction = [i for i in prediction.split("\n") if i.strip()]
-    all_ideas[summary] = [parent, [], new_input]
+    all_ideas[summary] = [parent, [], new_input, -1]
     for i in prediction:
         all_ideas[summary][1].append((PREDICTIONS, i))
-    cursor.execute("""SELECT i.iID FROM Idea i WHERE
-                     i.summary = %s; """, (parent, ))
-    # cursor.execute("""SELECT i.iID FROM Idea i JOIN Brainstorm b ON i.iID = b.iID WHERE
+    # cursor.execute("""SELECT i.iID FROM Idea i WHERE
+    #                  i.summary = %s; """, (parent, ))
+    cursor.execute("""SELECT i.iID FROM Idea i JOIN Brainstorm b ON i.iID = b.iID
+                      WHERE b.biD = %s""", (BID, ))
     #                 i.summary = %s; """, (summary, ))
-    # WHERE b.biD = """)
     all_ideas[summary][3] = cursor.fetchone()[0]
     process_save_press()
     return [summary, prediction]
