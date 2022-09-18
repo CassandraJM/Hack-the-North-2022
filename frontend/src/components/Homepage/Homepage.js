@@ -3,7 +3,6 @@ import './Homepage.css';
 import config from '../../config.json';
 import logo from '../../assets/think_notes.png';
 
-
 export const App = () => {
   const onSubmit = e => {
     e.preventDefault();
@@ -22,6 +21,12 @@ export const App = () => {
 
   return (
     <div className="app-page">
+      {/* Router Navigation */}
+      <Routes>
+        <div>
+        <Route path='/Details' element={<DetailView />} />
+        </div>
+      </Routes>
       {/* Title */}
       <div className="page-header">
         <div className="logo">
@@ -46,5 +51,6 @@ export const App = () => {
     </div>
   );
 }
+
 
 export default App;
