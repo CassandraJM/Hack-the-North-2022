@@ -17,24 +17,28 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
 }
 
 .center-idea {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 1.8rem;
   border: 1px solid black;
   border-radius: 10px;
   width: 100%;
   height: 80%;
+  text-align: center;
+  overflow: hidden;
+  padding: 10px;
 }
 
 .center-idea.homepage-idea-input {
   border: none;
   border-radius: 0;
   width: 100%;
-  font-size: 2rem;
+  font-size: 1.8rem;
   text-align: center;
 }
 

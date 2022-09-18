@@ -25,23 +25,24 @@ const IdeaBoard = props => {
 
   const getItems = () => {
     let items = [];
-    for(let i = 0; i < 8; i++) {
+    for(let i = 0; i <= 8; i++) {
       if(itemOrder[i] === -1) {
         items.push((
-          <div className="item" key={i}>
+          <div className="item" key={props.idea?.summary + '' + i}>
             { centerItem }
           </div>
         ));
       } else if(itemOrder[i] < props.idea?.children.length) {
+        const child = props.idea.children[itemOrder[i]];
         items.push(
-          <div className="item" key={i}>
+          <div className="item" key={props.idea?.summary + '' + i}>
             <Bubble
-              data={props.idea.children[itemOrder[i]]}
-              onClick={props.onTraverseBubble?.bind(this)} />
+              data={child}
+              onClick={() => props.onTraverseBubble(child)} />
           </div>
         );
       } else {
-        items.push(<div className="item" key={i}></div>);
+        items.push(<div className="item" key={props.idea?.summary + '' + i}></div>);
       }
     }
     return items;

@@ -5,6 +5,17 @@
     --bubble-child-size: 70px;
 }
 
+@keyframes bubble {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 .bubble {
     border-radius: 50%;
     border-width: 2px;
@@ -19,6 +30,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
+    animation: bubble 0.2s ease;
 }
 
 

@@ -66,10 +66,20 @@ export default class App extends React.Component {
     }
   };
 
-  goBack() {
-    this.setState({
-      currIdea: this.state.currIdea.parent,
-    });
+  onTraverseBack() {
+    if(this.state.currIdea.parent) {
+      this.setState({
+        currIdea: this.state.currIdea.parent,
+      });
+    }
+  }
+
+  onTraverseBubble(child) {
+    if(child && child.type === Type.CHILDREN) {
+      this.setState({
+        currIdea: child,
+      });
+    }
   }
 
   render() {
@@ -79,7 +89,10 @@ export default class App extends React.Component {
         <div className="page-header">
           {
             this.state.currIdea?.parent &&
-            <button className="page-header-back-button" onClick={this.goBack.bind(this)}>
+            <button
+              className="page-header-back-button"
+              onClick={this.onTraverseBack.bind(this)}
+            >
               <svg style={{width: '24px', height: '24px'}} viewBox="0 0 24 24">
                 <path fill="currentColor" d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z" />
               </svg>
@@ -106,6 +119,7 @@ export default class App extends React.Component {
           <IdeaBoard
             idea={this.state.currIdea}
             onIdeaSubmitted={this.onIdeaSubmitted.bind(this)}
+            onTraverseBubble={this.onTraverseBubble.bind(this)}
           />
         </div>
       </div>
