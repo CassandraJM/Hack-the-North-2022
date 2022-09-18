@@ -1,7 +1,7 @@
 from ssl import ALERT_DESCRIPTION_BAD_CERTIFICATE_HASH_VALUE
 from flask import Flask
 from flask import request
-import pandas as pd
+#import pandas as pd
 import re
 import os
 import psycopg2
@@ -28,19 +28,25 @@ connection.set_session(autocommit=True)
 
 cursor = connection.cursor()
 
-# cursor.execute("""DROP DATABASE IF EXISTS Brainstorm;
-#                 CREATE DATABASE Brainstorm; Use Brainstorm;""")
+cursor.execute("""DROP DATABASE IF EXISTS Brainstorm;
+                CREATE DATABASE Brainstorm; Use Brainstorm;""")
+cursor.execute("""DROP TABLE IF EXISTS Brainstorm CASCADE;
+                  CREATE TABLE Brainstorm (bID int, iID int, PRIMARY KEY (bID, iID));""")
 cursor.execute("""DROP TABLE IF EXISTS Idea CASCADE;
                   CREATE TABLE Idea(iID serial PRIMARY KEY, summary varchar(500)
-                , parent varchar(500), input int);""")
-
+                , parent varchar(500), input varchar(1000));""")
+cursor.execute("""DROP TABLE IF EXISTS ChildRelationship CASCADE;
+                  CREATE TABLE ChildRelationship (pID int, cID int, type varchar(30), 
+                  PRIMARY KEY (pID, cID));""")
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # summary, parent (summary), type, child summary, original input, parentID
-all_ideas = {str: [str, [(int, str)], str, int]}
-newly_added_ideas = {str: [str, [(int, str)], str, int]}
+#all_ideas = {str: [str, [(int, str)], str, int]}
+all_ideas = {}
+#newly_added_ideas = {str: [str, [(int, str)], str, int]}
+newly_added_ideas = set()
 COMMAND_CREATE = 'Create'
 COMMAND_EXPAND = 'Expand'
 COMMAND_SHRINK = 'Shrink'
@@ -48,7 +54,7 @@ COMMAND_ERROR = 'Error'
 CHILD_BUBBLES = 0
 PREDICTIONS = 1
 IMAGES = 2
-BID: int
+BID = 100
 
 
 # password: gavDhGqwRAmRg1L6K493VA
@@ -60,21 +66,37 @@ BID: int
 # }
 ###
 
+@app.route('/api/start', methods=['POST'])
+def create_start_idea():
+    start = request.json['start']
+    cursor.execute(
+        """Insert into Idea(sumarry, parent, input) values (%s, %s, %s) RETURNING iID;""", (start, 0, start))
+    iID = cursor.fetchone()[0]
+    cursor.execute("""Insert into Brainstorm values (%s, %s)""", (BID, iID))
+
+
 @app.route('/api/save', methods=['POST'])
 def process_save_press():
+    global newly_added_ideas
     for idea in newly_added_ideas:
         summary = idea
-        parent = newly_added_ideas[idea][0]
-        input = newly_added_ideas[idea][2]
-        child_type = newly_added_ideas[idea][1][0]
-        cursor.execute("""INSERT INTO Idea values (%s, %s, %s) RETURNING iID;
+        parent = all_ideas[idea][0]
+        input = all_ideas[idea][2]
+        child_type = all_ideas[idea][1][0]
+        if parent == 0:
+            cursor.execute("""INSERT INTO Idea(summary, parent, input) values (%s, %s, %s) RETURNING iID;
+                            """, (summary, 0, input))
+        else:
+            cursor.execute("""INSERT INTO Idea(summary, parent, input) values (%s, %s, %s) RETURNING iID;
                             """, (summary, parent, input))
         iID = cursor.fetchone()[0]
-        parent_id = newly_added_ideas[idea][3]
+        print(idea)
+        print(all_ideas)
+        parent_id = all_ideas[idea][3]
         cursor.execute(
             """INSERT INTO ChildRelationship values (%s, %s, %s);""",
             (parent_id, iID, child_type))
-    newly_added_ideas = []
+    newly_added_ideas = set()
 
 
 @app.route('/api/load', methods=['GET'])
@@ -114,22 +136,29 @@ def process_load_press():
 
 @app.route('/api/create', methods=['POST'])
 def process_human_input():
+    global newly_added_ideas
     new_input = request.json['input']
     parent = request.json['parent']
     df = get_summary(new_input)
-    print(df)
     summary = df.iloc[0][:-1]
     counter = 1
-    while summary in all_ideas:
+    while summary in all_ideas or not summary:
         summary = df.iloc[counter][:-1]
         counter += 1
+    newly_added_ideas.add(summary)
     prediction = get_predictions(summary)  # string
-    print(prediction)
     prediction = re.sub("[0-9]\. ", '', prediction)
     prediction = [i for i in prediction.split("\n") if i.strip()]
     all_ideas[summary] = [parent, [], new_input]
     for i in prediction:
         all_ideas[summary][1].append((PREDICTIONS, i))
+    cursor.execute("""SELECT i.iID FROM Idea i WHERE
+                     i.summary = %s; """, (parent, ))
+    # cursor.execute("""SELECT i.iID FROM Idea i JOIN Brainstorm b ON i.iID = b.iID WHERE
+    #                 i.summary = %s; """, (summary, ))
+    # WHERE b.biD = """)
+    all_ideas[summary][3] = cursor.fetchone()[0]
+    process_save_press()
     return [summary, prediction]
 
 
