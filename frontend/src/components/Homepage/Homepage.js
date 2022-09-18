@@ -3,6 +3,7 @@ import './Homepage.css';
 import config from '../../config.json';
 import IdeaBoard from '../IdeaBoard/IdeaBoard';
 import Idea from '../../Idea';
+import { Type } from '../../Idea';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -15,17 +16,29 @@ export default class App extends React.Component {
   onSubmit = e => {
     e.preventDefault();
 
-    if(e.target[0].value !== '') {
+    const text = e.target[0].value;
+    if(text !== '') {
       // Call create idea API
       fetch(`${config.testApiUrl}/api/create`, {
         method: "POST",
         headers: {'Content-Type': 'application/json'}, 
         body: JSON.stringify({
-          input: e.target[0].value,
+          input: text,
           parent: null,
         }),
       }).then(res => {
-        console.log("Request complete! response:", res);
+        res.json().then(data => {
+          // Add children to idea
+          let updatedIdea = this.state.currIdea;
+          const newIdea = new Idea(data[0], text, this.state.currIdea, [], Type.CHILDREN);
+          const prediction = new Idea(data[1], data[0], newIdea, [], Type.PREDICTIONS);
+          newIdea.addChild(prediction);
+          updatedIdea.addChild(newIdea);
+          
+          this.setState({
+            currIdea: updatedIdea,
+          });
+        });
       });
     }
   }
@@ -51,6 +64,7 @@ export default class App extends React.Component {
               name="name"
               placeholder="Enter your ideas here"
               className="header-input w100"
+              disabled={!this.state.currIdea}
             />
             <button type="submit" className="header-button">
               <svg style={{width: '24px', height: '24px'}} viewBox="0 0 24 24">
@@ -60,6 +74,7 @@ export default class App extends React.Component {
           </form>
         </div>
         <div>
+          { console.log(this.state.currIdea) }
           <IdeaBoard
             idea={this.state.currIdea}
             onIdeaSubmitted={this.onIdeaSubmitted.bind(this)}
